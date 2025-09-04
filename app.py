@@ -1,4 +1,5 @@
 import re
+import os
 from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
 import fugashi
@@ -18,7 +19,7 @@ except Exception as e:
 def katakana_to_hiragana(katakana_text):
     """Converts Katakana to Hiragana."""
     return ''.join(
-        chr(ord(c)-0x60) if 0x30A1 <= ord(c) <= 0x30F6 else c
+        chr(ord(c) - 0x60) if 0x30A1 <= ord(c) <= 0x30F6 else c
         for c in katakana_text
     )
 
@@ -66,5 +67,7 @@ def furigana_api():
     return jsonify({"result": result})
 
 if __name__ == "__main__":
-    # This is required for Render or any server deployment
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    # Use the PORT environment variable provided by Render
+    port = int(os.environ.get("PORT", 5000))
+    # Run Flask without debug mode in production
+    app.run(host="0.0.0.0", port=port)
